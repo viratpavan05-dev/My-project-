@@ -1,0 +1,38 @@
+PLEASE NOTE: This document has not been updated in a while and is out of date, but contents are retained as some may still be useful.
+
+TL;DR? The winston project recently shipped 3.0.0 out of RC and is actively working towards the next feature release as it continues to triage issues.
+
+Be kind & actively empathetic to one another
+What makes up winston?
+What about winston@2.x?!
+Could this be implemented as a format?
+Roadmap
+Looking for somewhere to help? Checkout the Roadmap & help triage open issues! Find an issue that looks like a duplicate? It probably is! Comment on it so we know it's maybe a duplicate 🙏.
+
+What makes up winston?
+As of winston@3 the project has been broken out into a few modules:
+
+winston-transport: Transport stream implementation & legacy Transport wrapper.
+logform: All formats exports through winston.format
+LEVEL and MESSAGE symbols exposed through triple-beam.
+Shared test suite for community transports
+Let's dig in deeper. The example below has been annotated to demonstrate the different packages that compose the example itself:
+
+const { createLogger, transports, format } = require('winston');
+const Transport = require('winston-transport');
+const logform = require('logform');
+const { combine, timestamp, label, printf } = logform.format;
+
+// winston.format is require('logform')
+console.log(logform.format === format) // true
+
+const logger = createLogger({
+  format: combine(
+    label({ label: 'right meow!' }),
+    timestamp(),
+    printf(({ level, message, label, timestamp }) => {
+      return `${timestamp} [${label}] ${level}: ${message}`;
+    })
+  ),
+  transports: [new transports.Console()]
+});
